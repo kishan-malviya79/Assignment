@@ -22,6 +22,7 @@ import { FormControl } from "@/components/ui/form";
 import { Calendar } from "@/components/ui/calendar";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { resolve } from "path";
+import { error } from "console";
 
 interface FormFields {
   name: string;
@@ -30,7 +31,7 @@ interface FormFields {
   password: string;
   phoneNumber: number;
   age: number;
-  gender?: "male" | "female";
+  gender: "male" | "female";
   dob: Date;
 }
 
@@ -38,12 +39,24 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
-  } = useForm<FormFields>();
+  } = useForm<FormFields>({
+    defaultValues: {
+      gender: "male"
+    },
+  });
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    // try{
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    // throw new Error();
     console.log(data);
+    // }
+    // catch (error){
+    //   setError("root",{
+    //     message: "The email is already taken "
+    //   }})
   };
 
   return (
@@ -198,37 +211,7 @@ export function LoginForm() {
                 </div>
               </div>
             </RadioGroup>
-            {/* {errors.gender && (
-              <div className=" text-red-500">{errors.gender.message}</div>
-            )} */}
-            {/* <RadioGroup defaultValue="..">
-              <Label>Gender</Label>
-              <div className="flex justify-evenly items-center">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="male"
-                    id="option-one"
-                    {...register("gender", {
-                      required: "Please select a gender",
-                    })}
-                  />
-                  <Label htmlFor="option-one">Male</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="female"
-                    id="option-two"
-                    {...register("gender", {
-                      required: "Please select a gender",
-                    })}
-                  />
-                  <Label htmlFor="option-two">Female</Label>
-                </div>
-              </div>
-              {errors.gender && (
-                <div className="text-red-500">{errors.gender.message}</div>
-              )}
-            </RadioGroup> */}
+           
 
             <Popover>
               <PopoverTrigger asChild>
@@ -248,6 +231,9 @@ export function LoginForm() {
             <Button disabled={isSubmitting} type="submit" className="w-full">
               {isSubmitting ? "loading..." : "Submit"}
             </Button>
+            {/* {errors.root && (
+                <div className=" text-red-500">{errors.root.message}</div>
+              )} */}
             <Button variant="outline" className="w-full">
               Login with Google
             </Button>
