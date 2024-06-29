@@ -21,6 +21,7 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { FormControl } from "@/components/ui/form";
 import { Calendar } from "@/components/ui/calendar";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { resolve } from "path";
 
 interface FormFields {
   name: string;
@@ -29,7 +30,7 @@ interface FormFields {
   password: string;
   phoneNumber: number;
   age: number;
-  gender: "male" | "female";
+  gender?: "male" | "female";
   dob: Date;
 }
 
@@ -37,10 +38,11 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormFields>();
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(data);
   };
 
@@ -130,11 +132,11 @@ export function LoginForm() {
 
             <div className="grid gap-2">
               <Label htmlFor="phone">Phone Number </Label>
-             
+
               <Input
                 {...register("phoneNumber", {
                   required: "Phone Number is required",
-                   pattern: {
+                  pattern: {
                     value: /^[0-9]{10}$/,
                     message: "Invalid phone number",
                   },
@@ -163,27 +165,43 @@ export function LoginForm() {
                 <div className=" text-red-500">{errors.age.message}</div>
               )}
             </div>
-            {/* <RadioGroup defaultValue="option-one">
+            <RadioGroup defaultValue="">
               <Label htmlFor="option-one">Gander</Label>
               <div className="flex justify-evenly items-center ">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="option-one" id="option-one" />
-                  <Label {...register("gander")} htmlFor="option-one">
+                  <Label
+                    {...register(
+                      "gender"
+                      // {
+                      //   required: " Gende is Required",
+                      // }
+                    )}
+                    htmlFor="option-one"
+                  >
                     Male
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="option-two" id="option-two" />
-                  <Label {...register("gander")} htmlFor="option-two">
+                  <Label
+                    {...register(
+                      "gender"
+                      //   {
+                      //   required: " Gende is Required",
+                      // }
+                    )}
+                    htmlFor="option-two"
+                  >
                     Female
                   </Label>
                 </div>
               </div>
-              {errors.gander && (
-                <div className=" text-red-500">{errors.gander.message}</div>
-              )}
-            </RadioGroup> */}
-            <RadioGroup defaultValue="">
+            </RadioGroup>
+            {/* {errors.gender && (
+              <div className=" text-red-500">{errors.gender.message}</div>
+            )} */}
+            {/* <RadioGroup defaultValue="..">
               <Label>Gender</Label>
               <div className="flex justify-evenly items-center">
                 <div className="flex items-center space-x-2">
@@ -210,7 +228,7 @@ export function LoginForm() {
               {errors.gender && (
                 <div className="text-red-500">{errors.gender.message}</div>
               )}
-            </RadioGroup>
+            </RadioGroup> */}
 
             <Popover>
               <PopoverTrigger asChild>
@@ -227,8 +245,8 @@ export function LoginForm() {
               </PopoverContent>
             </Popover>
 
-            <Button type="submit" className="w-full">
-              Login
+            <Button disabled={isSubmitting} type="submit" className="w-full">
+              {isSubmitting ? "loading..." : "Submit"}
             </Button>
             <Button variant="outline" className="w-full">
               Login with Google
