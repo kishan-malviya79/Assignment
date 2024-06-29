@@ -29,8 +29,8 @@ interface FormFields {
   password: string;
   phoneNumber: number;
   age: number;
-  gander: "male" | "female";
-  dob?: Date;
+  gender: "male" | "female";
+  dob: Date;
 }
 
 export function LoginForm() {
@@ -130,9 +130,14 @@ export function LoginForm() {
 
             <div className="grid gap-2">
               <Label htmlFor="phone">Phone Number </Label>
+             
               <Input
                 {...register("phoneNumber", {
                   required: "Phone Number is required",
+                   pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "Invalid phone number",
+                  },
                 })}
                 id="phone"
                 type="number"
@@ -158,7 +163,7 @@ export function LoginForm() {
                 <div className=" text-red-500">{errors.age.message}</div>
               )}
             </div>
-            <RadioGroup defaultValue="option-one">
+            {/* <RadioGroup defaultValue="option-one">
               <Label htmlFor="option-one">Gander</Label>
               <div className="flex justify-evenly items-center ">
                 <div className="flex items-center space-x-2">
@@ -177,7 +182,36 @@ export function LoginForm() {
               {errors.gander && (
                 <div className=" text-red-500">{errors.gander.message}</div>
               )}
+            </RadioGroup> */}
+            <RadioGroup defaultValue="">
+              <Label>Gender</Label>
+              <div className="flex justify-evenly items-center">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="male"
+                    id="option-one"
+                    {...register("gender", {
+                      required: "Please select a gender",
+                    })}
+                  />
+                  <Label htmlFor="option-one">Male</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="female"
+                    id="option-two"
+                    {...register("gender", {
+                      required: "Please select a gender",
+                    })}
+                  />
+                  <Label htmlFor="option-two">Female</Label>
+                </div>
+              </div>
+              {errors.gender && (
+                <div className="text-red-500">{errors.gender.message}</div>
+              )}
             </RadioGroup>
+
             <Popover>
               <PopoverTrigger asChild>
                 <Button
