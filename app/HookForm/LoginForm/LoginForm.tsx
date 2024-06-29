@@ -23,18 +23,22 @@ import { Calendar } from "@/components/ui/calendar";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 interface FormFields {
-  name?: string;
-  lastname?: string;
-  email?: string;
-  password?: string;
-  phoneNumber?: number;
-  age?: number;
-  gander?: "male" | "female";
+  name: string;
+  lastname: string;
+  email: string;
+  password: string;
+  phoneNumber: number;
+  age: number;
+  gander: "male" | "female";
   dob?: Date;
 }
 
 export function LoginForm() {
-  const { register, handleSubmit } = useForm<FormFields>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormFields>();
 
   const onSubmit: SubmitHandler<FormFields> = (data) => {
     console.log(data);
@@ -52,66 +56,107 @@ export function LoginForm() {
         <CardContent>
           <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-2">
-              <Label htmlFor="email">First Name</Label>
-              <Input {...register("name")} id="name" type="" placeholder="" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Last Name</Label>
+              <Label htmlFor="fistName">First Name</Label>
               <Input
-                {...register("lastname")}
-                id="lastname"
-                type=""
+                {...register("name", {
+                  required: "First Name is required",
+                })}
+                type="text"
                 placeholder=""
               />
             </div>
+            {errors.name && (
+              <div className=" text-red-500">{errors.name.message} </div>
+            )}
+            <div className="grid gap-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                {...register("lastname", {
+                  required: "Last Name is required",
+                })}
+                type="text"
+                placeholder=""
+              />
+            </div>
+            {errors.lastname && (
+              <div className=" text-red-500">{errors.lastname.message} </div>
+            )}
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
-                {...register("email")}
+                {...register("email", {
+                  required: "Email is required",
+                  validate: (value) => {
+                    if (!value.includes("@")) {
+                      return "Email must include @";
+                    }
+                    return true;
+                  },
+                })}
                 id="email"
                 type="email"
                 placeholder="m@example.com"
-                required
               />
+              {errors.email && (
+                <div className=" text-red-500">{errors.email.message}</div>
+              )}
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
-                <Label {...register("password")} htmlFor="password">
+                <Label
+                  {...register("password", {
+                    required: "password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must have at least 8 characters",
+                    },
+                  })}
+                  htmlFor="password"
+                >
                   Password
                 </Label>
-                <Link
+              </div>
+              <Input {...register("password")} id="password" type="password" />
+            </div>
+            {errors.password && (
+              <div className=" text-red-500">{errors.password.message}</div>
+            )}
+            {/* <Link
                   href="#"
                   className="ml-auto inline-block text-sm underline"
-                >
+                  >
                   Forgot your password?
-                </Link>
-              </div>
-              <Input
-                {...register("password")}
-                id="password"
-                type="password"
-                required
-              />
-            </div>
+                  </Link> */}
+
             <div className="grid gap-2">
               <Label htmlFor="phone">Phone Number </Label>
               <Input
-                {...register("phoneNumber")}
+                {...register("phoneNumber", {
+                  required: "Phone Number is required",
+                })}
                 id="phone"
                 type="number"
                 placeholder=""
-                required
               />
+              {errors.phoneNumber && (
+                <div className=" text-red-500">
+                  {errors.phoneNumber.message}
+                </div>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="phone">Age</Label>
               <Input
-                {...register("age")}
+                {...register("age", {
+                  required: " Age is Required",
+                })}
                 id="phone"
                 type="number"
                 placeholder=""
-                required
               />
+              {errors.age && (
+                <div className=" text-red-500">{errors.age.message}</div>
+              )}
             </div>
             <RadioGroup defaultValue="option-one">
               <Label htmlFor="option-one">Gander</Label>
@@ -129,6 +174,9 @@ export function LoginForm() {
                   </Label>
                 </div>
               </div>
+              {errors.gander && (
+                <div className=" text-red-500">{errors.gander.message}</div>
+              )}
             </RadioGroup>
             <Popover>
               <PopoverTrigger asChild>
